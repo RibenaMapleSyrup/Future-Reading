@@ -14,7 +14,6 @@ body {
   position: fixed;
   z-index: 1;
   top: 0;
-  /* whether or not we clip content if its wider than 50% webpage width */
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -49,10 +48,6 @@ body {
   height: 500px;
   font-family: "Courier New";
   font-size: 25px;
-
-  /* border: 15px solid green;
-  padding: 50px;
-  margin: 20px; */
 }
 
 .label {
@@ -77,40 +72,26 @@ body {
 
 <div class="split left">
   <div id="graph" class="centerleft">
-    <!-- <img src="img_avatar2.png" alt="Avatar woman">
-    <h2>Jane Flex</h2>
-    <p>Some text.</p> -->
   </div>
 </div>
 
 <div class="split right">
   <div id="tool" class="centerright">
-
-    <!-- <img src="img_avatar.png" alt="Avatar man">
-    <h2>John Doe</h2>
-    <p>Some text here too.</p> -->
-
   </div>
 </div>
 
 <script>
 
-// surely the ratio of width and height should be related to the axis?
 var margin = {top: 100, right: 100, bottom: 100, left: 100},
   width = 850 - margin.left - margin.right,
   height = 900 - margin.top - margin.bottom;
 
-// var parseDate = d3.timeFormat("%Y-%m-%d").parse,
-//     formatDate = d3.timeFormat("%b %d");
 
-// these are our mapping functions - we provide a date to x and it
-// returns a number between 0 and width...
 var x = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]),
     z = d3.scaleLinear().range(["grey", "black"]);
 
 // The size of the buckets in the CSV data file.
-// This could be inferred from the data if it weren't sparse.
     yStep = height/101;
 
 var svg = d3.select("#graph").append("svg")
@@ -119,19 +100,14 @@ var svg = d3.select("#graph").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// d3.csv("physOrg2.csv", function(error, buckets) {
 d3.csv("physOrg_articles.csv", function(error, buckets) {
   if (error) throw error;
 
-
-  // Coerce the CSV data to the appropriate types.
   var parseTime = d3.timeParse("%Y-%m")
   var parseMonth = d3.timeParse("%Y-%m")
   buckets.forEach(function(d) {
     d.name = parseMonth(d.group).toLocaleString('default', { month: 'long' });
     d.group = parseTime(d.group);
-
-    // console.log(parseMonth(d.group))
     d.year = d.group.getFullYear();
     d.month = d.group.getMonth()+2;
     d.final = parseTime(JSON.stringify(d.year) + "-" + JSON.stringify(d.month))
@@ -139,26 +115,17 @@ d3.csv("physOrg_articles.csv", function(error, buckets) {
     d.value = +d.value;
   });
 
-  // Extend the x- and y-domain to fit the last bucket.
-  // For example, the y-bucket 3200 corresponds to values [3200, 3300].
-  // x.domain([x.domain()[0], +x.domain()[1] + xStep]);
   x.domain([parseTime("2012-4"), parseTime("2020-4")])
   y.domain([1970,2071])
   z.domain([0, d3.max(buckets, function(d) { return d.value; })]);
 
-  // Display the tiles for each non-zero bucket.
-  // See http://bl.ocks.org/3074470 for an alternative implementation.
-
-
 // build tooltip
-
   var tooltip = d3.select("#tool")
     .append("div")
     .attr("class", "tooltip")
     .style("text-align", "left")
     .style("padding", "15px")
     .html("r/Futurology is a popular subreddit for futurologists to share articles and speculate on different future proposals. <br> 'phys.org' is the most popular site to share articles from on the subreddit. <br> The left-hand plot depicts phys.org articles shared throughout the entire history of the subreddit that mention a date between 1970-2070. <br> Select the data points to find out more...")
-
 
   var click = function(d, i) {
     d3.selectAll('.highlight')
@@ -182,39 +149,13 @@ d3.csv("physOrg_articles.csv", function(error, buckets) {
       .attr("class", "tile")
       .attr("x", function(d) { return x(d.group); })
       .attr("y", function(d) { return y(d.variable + 1); })
-      // .attr("width", x(getTime(d.group)) - x(previous date) width/96)
-
       .attr("width", function(d) { return x(d.final)-x(d.group)})
       .attr("height", yStep)
       .attr("color", function(d) { return z(d.value); })
       // .attr("height",  y(0) - y(yStep))
       .style("fill", function(d) { return z(d.value); })
     .on("click", click);
-  // Add a legend for the color values.
-  // var legend = svg.selectAll(".legend")
-  //     .data(z.ticks(6).slice(1).reverse())
-  //   .enter().append("g")
-  //     .attr("class", "legend")
-  //     .attr("transform", function(d, i) { return "translate(" + (width + 20) + "," + (20 + i * 20) + ")"; });
-  //
-  // legend.append("rect")
-  //     .attr("width", 20)
-  //     .attr("height", 20)
-  //     .style("fill", z);
-  //
-  // legend.append("text")
-  //     .attr("x", 26)
-  //     .attr("y", 10)
-  //     .attr("dy", ".35em")
-  //     .text(String);
-
-  // svg.append("text")
-  //     .attr("class", "label")
-  //     .attr("x", width + 20)
-  //     .attr("y", 10)
-  //     .attr("dy", ".35em")
-  //     .text("Count");
-
+    
   // Add an x-axis with label.
   svg.append("g")
       .attr("class", "x axis")
