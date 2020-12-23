@@ -12,7 +12,7 @@ import sys, getopt
 PUSHSHIFT_REDDIT_URL = "http://api.pushshift.io/reddit"
 
 def date_to_utc(date):
-    utc = datetime.timestamp(datetime(int(str(date)[0:4]),int(str(date)[5:6]),int(str(date)[7:8])))
+    utc = datetime.timestamp(datetime(int(str(date)[0:4]),int(str(date)[4:6]),int(str(date)[6:8])))
     return int(utc)
 
 def progress_bar(current, total, barLength = 20):
